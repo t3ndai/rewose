@@ -1,0 +1,18 @@
+[
+    {
+        "maxAgeSeconds": 10,
+        "method": [
+            "GET",
+            "PUT",
+            "POST",
+            "DELETE",
+            "HEAD",
+            "*"
+        ],
+        "origin": [
+            "*",
+            "http://localhost:8000"
+        ],
+        "responseHeader": ["*", "Content-Range", "Accept", "Content-Type", "Origin", "Range"]
+    }
+]
