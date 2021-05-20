@@ -1,5 +1,12 @@
 // Home Page
 
-export function getHome (req, res) {
-  res.render('home/home')
+function getHome (req, res) {
+  res.view('home/home')
+}
+
+export default function (app, opts, done) {
+  // Home
+  app.get('/home', getHome)
+
+  done()
 }

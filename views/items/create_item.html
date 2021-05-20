@@ -22,20 +22,19 @@
                 const filename = new Date().getTime() + '-' + file.name
                 const filetype = file.type 
 
-                const data = JSON.stringify({'filename': filename, 'file': file })
+                let form = new FormData()
+                form.append('file', file)
+                form.append('filename', filename)
 
                 fetch(url+'/attachment', {
                     method: "POST",
                     credentials: 'same-origin',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: data
+                    body: form
                 })
                 .then(res => res.json())
                 .then(data => {
                     const objectStorageUrl = data.url 
-                    event.attachment.setAttributes({'url': url, href: url + '?content-disposition=attachment'})
+                    event.attachment.setAttributes({'url': objectStorageUrl, href: objectStorageUrl + '?content-disposition=attachment'})
                 })
                 .catch(err => { console.log(err)} )
 

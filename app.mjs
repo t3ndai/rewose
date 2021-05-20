@@ -1,45 +1,42 @@
+import { join, dirname } from 'path'
+import { fileURLToPath } from 'url'
+
 import express from 'express'
-import path, { dirname } from 'path'
+import fastify from 'fastify'
 import morgan from 'morgan'
 import bodyParser from 'body-parser'
 import nunjucks from 'nunjucks'
+import multer from 'fastify-multer'
+import autoload from 'fastify-autoload'
+import * as PointOfView from 'point-of-view'
 
-import * as login from './routes/login.mjs'
-import * as home from './routes/home.mjs'
-import * as items from './routes/items.mjs'
-
-const app = express()
-const logger = morgan('dev')
-
-// Config
-app.use(logger)
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
-
-nunjucks.configure('views', {
-  autoescape: true,
-  express: app
+const app = fastify({
+  logger: {
+    prettyPrint: true
+  }
 })
 
-app.set('view engine', 'html')
-//app.set('views', path.join(dirname('.'), 'views'))
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
 
-// Authentication
+app.register(import('fastify-multipart'), { attachFieldsToBody: true })
 
-app.get('/register', login.getRegister)
-app.post('/register', login.postRegister)
+app.register(PointOfView, {
+  engine: {
+    nunjucks: nunjucks
+  },
+  viewExt: 'html',
+  root: join(__dirname, 'views')
+})
 
-app.get('/login', login.getLogin)
-app.post('/login', login.postLogin)
+app.register(autoload, {
+  dir: join(__dirname, 'routes')
+})
 
-// Home
-app.get('/home', home.getHome)
-
-// Items
-app.get('/newItem', items.newItem)
-app.post('/createItem', items.createItem)
-app.post('/attachment', items.uploadAttachment)
-
-app.listen(8000, () => {
-  console.log('listening on port 8000')
+app.listen(8000, '0.0.0.0', (err, address) => {
+  if (err) {
+    app.log.error(err)
+    process.exit(1)
+  }
+  app.log.info(`listening on port ${address}`)
 })

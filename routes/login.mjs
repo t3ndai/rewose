@@ -18,12 +18,12 @@ ToDo
 
 // Register
 
-export function getRegister (req, res) {
+function getRegister (req, reply) {
   const page = 'Register'
-  res.render('login/login', { page: page })
+  reply.view('login/login', { page: page })
 }
 
-export function postRegister (req, res) {
+function postRegister (req, reply) {
   const email = req.body.email
   const password = req.body.password
 
@@ -42,10 +42,10 @@ export function postRegister (req, res) {
       .then(r => {
         if (r.status === 200) {
           const token = r.data.token
-          res
+          reply
             .status(201)
             .cookie('access_token', 'Bearer' + token, {
-              expires: new Date(Date.now() * 24 * 3_600_000),
+              expireply: new Date(Date.now() * 24 * 3_600_000),
               httpOnly: true,
               sameSite: true
             })
@@ -56,21 +56,21 @@ export function postRegister (req, res) {
       })
       .catch(err => {
         console.log(err)
-        res.send('Please try again, we had error!')
+        reply.send('Please try again, we had error!')
       })
   } else {
-    res.send('Pass in valid data')
+    reply.send('Pass in valid data')
   }
 }
 
 // Login
 
-export function getLogin (req, res) {
+function getLogin (req, reply) {
   const page = 'Login'
-  res.render('login/login', { page: page })
+  reply.view('login/login', { page: page })
 }
 
-export function postLogin (req, res) {
+function postLogin (req, reply) {
   const email = req.body.email
   const password = req.body.password
 
@@ -84,10 +84,10 @@ export function postLogin (req, res) {
       .then(r => {
         if (r.status === 200) {
           const token = r.data.token
-          res
+          reply
             .status(200)
             .cookie('access_token', 'Bearer' + token, {
-              expires: new Date(Date.now() + 24 * 3600000),
+              expireply: new Date(Date.now() + 24 * 3600000),
               httpOnly: true,
               sameSite: true
             })
@@ -98,10 +98,22 @@ export function postLogin (req, res) {
         }
       })
       .catch(err => {
-        res.send('Please try again, we had an error!')
+        reply.send('Please try again, we had an error!')
         console.log(err)
       })
   } else {
-    res.send('pass in valid data')
+    reply.send('pass in valid data')
   }
+}
+
+export default function (app, opts, done) {
+  // Authentication
+
+  app.get('/register', getRegister)
+  app.post('/register', postRegister)
+
+  app.get('/login', getLogin)
+  app.post('/login', postLogin)
+
+  done()
 }
