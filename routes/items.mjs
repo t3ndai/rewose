@@ -1,6 +1,8 @@
 // SetupsItems
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
 import axios from 'axios'
+import express from 'express'
+import multer from 'multer'
 
 /*
  TODO
@@ -9,6 +11,11 @@ import axios from 'axios'
  - post item with 3 images
 
 */
+
+const items = express.Router()
+
+const memoryStorage = multer.memoryStorage()
+const upload = multer({ storage: memoryStorage })
 
 const AWS_KEY = 'AKIAWH4VB4E62RWP5IOK'
 const AWS_SECRET = '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'
@@ -28,20 +35,19 @@ const clientS3 = new S3Client({
 })
 
 function newItem (req, reply) {
-  reply.view('items/create_item')
+  reply.render('items/create_item')
 }
 
 function createItem (req, reply) {
   // Need to save attached filename to fetch the replyource later from s3
 
   const data = req.body.content
-  console.log(data)
-  reply.send('Congrats you posted something new!!')
+  reply.send(data)
 }
 
-async function uploadAttachment (req, reply) {
-  const filename = req.body.filename.value
-  const file = await req.body.file.toBuffer()
+function uploadAttachment (req, reply) {
+  const filename = req.body.filename
+  const file = req.file.buffer
 
   if (filename && file) {
     const command = new PutObjectCommand({ Key: filename, Body: file, Bucket: BUCKET })
@@ -59,14 +65,17 @@ async function uploadAttachment (req, reply) {
 
         console.log(err)
       })
+  } else {
+    // TODO: Error if no attached file
+    reply
+      .status(400)
+      .send({ error: 'error' })
   }
 }
 
-export default function (app, opts, done) {
-  // Items
-  app.get('/newItem', newItem)
-  app.post('/createItem', createItem)
-  app.post('/attachment', uploadAttachment)
+// Items
+items.get('/new', newItem)
+items.post('/createItem', createItem)
+items.post('/attachment', upload.single('file'), uploadAttachment)
 
-  done()
-}
+export default items

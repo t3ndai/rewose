@@ -1,6 +1,6 @@
-{% import "login_form.html" as login_form %}
+{% from "login/login_form.html" import login_form %}
 
 <h2> {{ page }}</h2>
-<form action={{page.toLowerCase()}`, method="POST"> 
+<form action="{{ page.toLowerCase() }}" method="POST"> 
   {{ login_form(page) }} 
 </form>

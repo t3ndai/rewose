@@ -5,7 +5,7 @@
 
 </head>
     <article>
-        <form action="/createItem", method="POST"> 
+        <form action="/items/createItem", method="POST"> 
             <input id="editor", value="Editor content goes here", type="hidden", name="content">
             <trix-editor input="editor"></trix-editor>
             <input type="Submit", value="Create">
@@ -26,7 +26,7 @@
                 form.append('file', file)
                 form.append('filename', filename)
 
-                fetch(url+'/attachment', {
+                fetch(url+'/items/attachment', {
                     method: "POST",
                     credentials: 'same-origin',
                     body: form

@@ -1,12 +1,12 @@
 // Home Page
+import express from 'express'
+
+const home = express.Router()
 
 function getHome (req, res) {
-  res.view('home/home')
+  res.render('home/home')
 }
 
-export default function (app, opts, done) {
-  // Home
-  app.get('/home', getHome)
+home.get('/', getHome)
 
-  done()
-}
+export default home
