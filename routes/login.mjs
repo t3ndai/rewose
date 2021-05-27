@@ -28,23 +28,22 @@ function postRegister (req, reply) {
 
   if (validator.isEmail(email) && !validator.isEmpty(password)) {
     auth.register(email, password)
-      .then(r => {
-        switch (r.msg) {
+      .then(authResult => {
+        switch (authResult.msg) {
           case 'ok':
-            reply
+            return reply
               .status(201)
-              .cookie('access_token', 'Bearer' + r.data, {
+              .cookie('user_id', authResult.data, {
                 expireply: new Date(Date.now() * 24 * 3_600_000),
                 httpOnly: true,
-                sameSite: true
+                sameSite: true,
+                signed: true
               })
               .redirect('/home')
-            break
           case 'error':
-            reply
+            return reply
               .status(404)
               .redirect('/register')
-            break
         }
       })
       .catch(err => {
@@ -63,35 +62,33 @@ function getLogin (req, reply) {
   reply.render('login/login.html', { page: page })
 }
 
-function postLogin (req, reply) {
+function postLogin (req, reply, next) {
   const email = req.body.email
   const password = req.body.password
 
   if (validator.isEmail(email) && !validator.isEmpty(password)) {
-    const authResult = auth.login(email, password)
-    console.log('auth result', authResult)
-    switch (authResult.msg) {
-      case 'ok':
-        reply
-          .status(200)
-          .cookie('access_token', 'Bearer' + r.data, {
-            expireply: new Date(Date.now() + 24 * 3600000),
-            httpOnly: true,
-            sameSite: true
-          })
-          .redirect('/home')
-        break
-      case 'error':
-        reply
-          .status(404)
-          .redirect('/login')
-        break
-    }
-
-    /*       .catch(err => {
+    auth.login(email, password)
+      .then(authResult => {
+        switch (authResult.msg) {
+          case 'ok':
+            return reply
+              .status(200)
+              .cookie('user_id', authResult.data, {
+                expireply: new Date(Date.now() + 24 * 3600000),
+                httpOnly: true,
+                sameSite: true,
+                signed: true
+              })
+              .redirect('/home')
+          case 'error':
+            return reply
+              .status(404)
+              .redirect('/login')
+        }
+      }).catch(err => {
         reply.send('Please try again, we had an error!')
         console.log(err)
-      }) */
+      })
   } else {
     reply.send('pass in valid data')
   }

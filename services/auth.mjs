@@ -6,7 +6,7 @@ const faUrl = 'http://localhost:9011/api/'
 const headers = { Authorization: authApiKey, 'Content-type': 'application/json' }
 
 async function register (email, password) {
-  axios({
+  return axios({
     method: 'POST',
     url: faUrl + 'user',
     headers: headers,
@@ -19,9 +19,8 @@ async function register (email, password) {
   })
     .then(r => {
       if (r.status >= 200 && r.status < 300) {
-        console.log(r.data)
-        const token = r.data.token
-        return { msg: 'ok', data: token }
+        const userId = r.data.user.id
+        return { msg: 'ok', data: userId }
       } else if (r.status >= 500) {
         console.log(r.data)
         throw Error('Auth Service Error')
@@ -31,12 +30,12 @@ async function register (email, password) {
     })
     .catch(err => {
       console.log(err)
-      return err
+      return Promise.reject(err)
     })
 }
 
-function login (email, password) {
-  axios({
+async function login (email, password) {
+  return axios({
     method: 'POST',
     url: faUrl + 'login',
     headers: headers,
@@ -44,8 +43,8 @@ function login (email, password) {
   })
     .then(r => {
       if (r.status >= 200 && r.status < 300) {
-        const token = r.data.token
-        return { msg: 'ok', data: token }
+        const userId = r.data.user.id
+        return { msg: 'ok', data: userId }
       } else if (r.status >= 500) {
         console.log(r.data)
         throw Error('Auth Service Error')
@@ -55,7 +54,7 @@ function login (email, password) {
     })
     .catch(err => {
       console.log(err)
-      return err
+      return Promise.reject(err)
     })
 }
 

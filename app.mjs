@@ -5,6 +5,8 @@ import express from 'express'
 import morgan from 'morgan'
 import bodyParser from 'body-parser'
 import nunjucks from 'nunjucks'
+import cookieParser from 'cookie-parser'
+import consolidate from 'consolidate'
 
 import login from './routes/login.mjs'
 import home from './routes/home.mjs'
@@ -15,17 +17,14 @@ const app = express()
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
-
-app.set('view engine', 'html')
+app.use(cookieParser('super_secret'))
 
 app.use(morgan('dev'))
 
 // Views
-
-nunjucks.configure('views', {
-  autoescape: true,
-  express: app
-})
+app.engine('html', consolidate.nunjucks)
+app.set('view engine', 'html')
+app.set('views', 'views')
 
 // Routing
 
