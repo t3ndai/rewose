@@ -8,6 +8,8 @@
         <form action="/items/createItem", method="POST"> 
             <input id="editor", value="Editor content goes here", type="hidden", name="content">
             <trix-editor input="editor"></trix-editor>
+            <label for='tags'>Tags</label>
+            <input type='text' name='tags'>
             <input type="Submit", value="Create">
         </form>
     </article>

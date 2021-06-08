@@ -9,24 +9,34 @@ import db from './db.mjs'
 */
 function sqlFilePath (file) {
   const filePath = resolve('..', 'sql', file)
-  console.log(filePath)
   return filePath
 }
 
 /*
 * Add single post to db
-* @param (string) userID
-* @param (string) content as jsonString
-* @returns {Promise}
+* @param {string} userID
+* @param {string} content as jsonString
+* @param {Array}{string} tags
+* @returns {Promise} result
 */
-function addPost (userId, content) {
+function addPost (userId, content, tags) {
   const query = fs.readFileSync(sqlFilePath('add_post.sql')).toString()
-  console.log(query)
-  return db.query(query, [content, userId])
+  return db.query(query, [content, userId, tags])
+}
+
+/*
+* Fetch a single post from the db
+* @param {string} postId
+* @returns {Promise} content result
+*/
+function getPost (postId) {
+  const query = fs.readFileSync(sqlFilePath('get_post.sql')).toString()
+  return db.query(query, [postId])
 }
 
 const posts = {
-  add: addPost
+  add: addPost,
+  get: getPost
 }
 
 export { posts }
