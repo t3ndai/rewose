@@ -1,10 +1,7 @@
-import { join, dirname } from 'path'
-import { fileURLToPath } from 'url'
 
 import express from 'express'
 import morgan from 'morgan'
 import bodyParser from 'body-parser'
-import nunjucks from 'nunjucks'
 import cookieParser from 'cookie-parser'
 import consolidate from 'consolidate'
 

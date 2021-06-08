@@ -1,8 +1,11 @@
 // SetupsItems
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
-import axios from 'axios'
 import express from 'express'
 import multer from 'multer'
+import sanitizeHtml from 'sanitize-html'
+
+import auth from '../middleware/auth.mjs'
+import { posts } from '../services/sql.mjs'
 
 /*
  TODO
@@ -13,6 +16,7 @@ import multer from 'multer'
 */
 
 const items = express.Router()
+items.use(auth.sessionValid)
 
 const memoryStorage = multer.memoryStorage()
 const upload = multer({ storage: memoryStorage })
@@ -38,11 +42,28 @@ function newItem (req, reply) {
   reply.render('items/create_item')
 }
 
-function createItem (req, reply) {
-  // Need to save attached filename to fetch the replyource later from s3
-
+/*
+* Saves User created post to db
+*/
+async function createItem (req, reply) {
   const data = req.body.content
-  reply.send(data)
+  const userId = req.signedCookies.user_id
+
+  const cleanedData = sanitizeHtml(data)
+  const content = JSON.stringify(cleanedData)
+
+  try {
+    const postID = await posts.add(userId, content)
+
+    console.log('postID', postID)
+
+    reply.send(cleanedData)
+  } catch (err) {
+    console.log(err)
+    reply
+      .status(500)
+      .send('Could not save post')
+  }
 }
 
 function uploadAttachment (req, reply) {
@@ -74,7 +95,7 @@ function uploadAttachment (req, reply) {
 }
 
 // Items
-items.get('/new', newItem)
+items.get('/newItem', newItem)
 items.post('/createItem', createItem)
 items.post('/attachment', upload.single('file'), uploadAttachment)
 
