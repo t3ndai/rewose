@@ -10,7 +10,7 @@ import { saveFile } from '../services/object_storage.mjs'
 /*
  TODO
 
- - Get item by id
+ - Update item
 
 */
 
@@ -24,7 +24,8 @@ const upload = multer({ storage: memoryStorage })
 * Item creation page
 */
 function newItem (req, reply) {
-  reply.render('items/create_item')
+  const formAction = 'items/createItem'
+  reply.render('items/create_item', { formAction })
 }
 
 /*
@@ -85,13 +86,66 @@ function uploadAttachment (req, reply) {
 */
 async function getItem (req, res) {
   const itemId = req.params.itemId
+  const userId = req.signedCookies.user_id
+
+  try {
+    const result = await posts.get(itemId)
+    const { rows: [{ content, user_id, tags }] } = result
+
+    const author = userId === user_id
+
+    res
+      .status(200)
+      .render('items/view_item', { content, tags, author, itemId })
+  } catch (err) {
+    console.log(err)
+    res
+      .status(404)
+      .send('Not found')
+  }
+}
+
+/*
+* Update item
+*/
+async function updateItem (req, res) {
+  const itemId = req.params.itemId
+  const userId = req.signedCookies.user_id
+  const dirtyContent = req.body.content
+
+  const cleanContent = sanitizeHtml(dirtyContent, {
+    allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img'])
+  })
+  const content = JSON.stringify(cleanContent)
+
+  try {
+    const pathResult = await posts.get(itemId)
+    const { rows: [{ path }] } = pathResult
+    await posts.update(content, userId, path)
+    res
+      .status(201)
+      .redirect('/home')
+  } catch (err) {
+    console.log(err)
+    res
+      .status(404)
+      .send('Not found')
+  }
+}
+
+/*
+* Item update Edit
+*/
+async function getItemUpdateEdit (req, res) {
+  const itemId = req.params.itemId
+  const formAction = `items/${itemId}/update`
 
   try {
     const result = await posts.get(itemId)
     const { rows: [{ content }] } = result
     res
       .status(200)
-      .send(content)
+      .render('items/create_item.html', { content, formAction })
   } catch (err) {
     console.log(err)
     res
@@ -103,7 +157,9 @@ async function getItem (req, res) {
 // Items
 items.get('/newItem', newItem)
 items.get('/:itemId', getItem)
+items.get('/:itemId/update', getItemUpdateEdit)
 items.post('/createItem', createItem)
 items.post('/attachment', upload.single('file'), uploadAttachment)
+items.post('/:itemId/update', updateItem)
 
 export default items

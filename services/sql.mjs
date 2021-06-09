@@ -34,9 +34,22 @@ function getPost (postId) {
   return db.query(query, [postId])
 }
 
+/*
+* Update Post creating hierachy
+* @param {string} content
+* @param {string} path
+* @param {string} userId
+* @returns {Promise} result
+*/
+function updatePost (content, path, userId) {
+  const query = fs.readFileSync(sqlFilePath('update_post.sql')).toString()
+  return db.query(query, [content, path, userId])
+}
+
 const posts = {
   add: addPost,
-  get: getPost
+  get: getPost,
+  update: updatePost
 }
 
 export { posts }

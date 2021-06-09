@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<article>
+
+    {{ content  | safe }}
+
+    <div>Tags:
+    {% for tag in tags %}
+    <a href>{{ tag }}</a>
+    {% endfor %}
+    </div>
+
+    {% if author %}
+       <button><a href="/items/{{itemId}}/update" data-turbo-action="replace">Update Post</a></button>
+    {% endif %} 
+</article>
+{% endblock %}
