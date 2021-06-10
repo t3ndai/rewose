@@ -7,7 +7,7 @@ import db from './db.mjs'
 * @param {string} file name
 * @returns {string} file path
 */
-function sqlFilePath(file) {
+function sqlFilePath (file) {
   const filePath = resolve('..', 'sql', file)
   return filePath
 }
@@ -19,7 +19,7 @@ function sqlFilePath(file) {
 * @param {Array}{string} tags
 * @returns {Promise} result
 */
-function addPost(userId, content, tags) {
+function addPost (userId, content, tags) {
   const query = fs.readFileSync(sqlFilePath('add_post.sql')).toString()
   return db.query(query, [content, userId, tags])
 }
@@ -29,7 +29,7 @@ function addPost(userId, content, tags) {
 * @param {string} postId
 * @returns {Promise} content result
 */
-function getPost(postId) {
+function getPost (postId) {
   const query = fs.readFileSync(sqlFilePath('get_post.sql')).toString()
   return db.query(query, [postId])
 }
@@ -41,7 +41,7 @@ function getPost(postId) {
 * @param {string} userId
 * @returns {Promise} result
 */
-function updatePost(content, path, userId) {
+function updatePost (content, path, userId) {
   const query = fs.readFileSync(sqlFilePath('update_post.sql')).toString()
   return db.query(query, [content, path, userId])
 }
@@ -51,8 +51,18 @@ function updatePost(content, path, userId) {
 * @param {string} postId
 * @returns {Promise} result
 */
-function getPostChildren(postId) {
+function getPostChildren (postId) {
   const query = fs.readFileSync(sqlFilePath('get_child_posts.sql')).toString()
+  return db.query(query, [postId])
+}
+
+/*
+* Get the number of updates
+* @param {string} postId
+* @returns {Promise} result
+*/
+function getNumberOfUpdates (postId) {
+  const query = fs.readFileSync(sqlFilePath('count_updates.sql')).toString()
   return db.query(query, [postId])
 }
 
@@ -60,7 +70,8 @@ const posts = {
   add: addPost,
   get: getPost,
   update: updatePost,
-  children: getPostChildren
+  children: getPostChildren,
+  updateCount: getNumberOfUpdates
 }
 
 export { posts }

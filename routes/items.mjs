@@ -10,8 +10,6 @@ import { saveFile } from '../services/object_storage.mjs'
 /*
  TODO
 
- - Update item
-
 */
 
 const items = express.Router()
@@ -90,13 +88,17 @@ async function getItem (req, res) {
 
   try {
     const result = await posts.get(itemId)
-    const { rows: [{ content, user_id, tags }] } = result
+    const updatesResults = await posts.updateCount(itemId)
 
-    const author = userId === user_id
+    const { rows: [{ content, user_id: authorId, tags }] } = result
+    const { rows: [{ count: numUpdates }] } = updatesResults
+
+    // check to see whether user can update post
+    const author = userId === authorId
 
     res
       .status(200)
-      .render('items/view_item', { content, tags, author, itemId })
+      .render('items/view_item', { content, tags, author, itemId, numUpdates })
   } catch (err) {
     console.log(err)
     res
@@ -163,7 +165,6 @@ async function getPostUpdates (req, res) {
   try {
     const result = await posts.children(itemId)
     const { rows: postResults } = result
-    console.log(postResults)
     res
       .status(200)
       .render('items/item_history', { postResults })
