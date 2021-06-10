@@ -154,10 +154,33 @@ async function getItemUpdateEdit (req, res) {
   }
 }
 
+/*
+* Get children of posts i.e updates
+*/
+async function getPostUpdates (req, res) {
+  const itemId = req.params.itemId
+
+  try {
+    const result = await posts.children(itemId)
+    const { rows: postResults } = result
+    console.log(postResults)
+    res
+      .status(200)
+      .render('items/item_history', { postResults })
+  } catch (err) {
+    console.log(err)
+    res
+      .status(500)
+      .send('not able to fetch children')
+  }
+}
+
 // Items
 items.get('/newItem', newItem)
 items.get('/:itemId', getItem)
 items.get('/:itemId/update', getItemUpdateEdit)
+items.get('/:itemId/updates', getPostUpdates)
+
 items.post('/createItem', createItem)
 items.post('/attachment', upload.single('file'), uploadAttachment)
 items.post('/:itemId/update', updateItem)

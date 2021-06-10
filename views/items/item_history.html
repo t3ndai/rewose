@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% from "items/item.html" import item %}
+
+{%block content %}
+<article>
+    
+    {%for post in postResults %}
+        {{ item(post.created_at, post.content) }}
+    {% endfor %}
+
+</article>
+
+{% endblock %}
