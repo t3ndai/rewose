@@ -18,5 +18,23 @@
     {% if author %}
        <button><a href="/items/{{itemId}}/update" data-turbo-action="replace">Update Post</a></button>
     {% endif %} 
+
+    <div id="collections" ></div>
+    <button id='collectionBtn' hx-get="/collections" hx-trigger="click" hx-target="#collections">Add To Collection</button>
 </article>
+
+<script type="module">
+
+    const collections = document.getElementById('collections')
+    collections.style.display = 'block'
+    tippy('#collectionBtn', {
+        content: collections, 
+        trigger: 'click',
+        interactive: true, 
+        allowHTML: true,
+        theme: 'light',
+        placement: 'auto-start'
+    })
+</script>
+
 {% endblock %}

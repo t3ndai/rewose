@@ -12,6 +12,8 @@ function sqlFilePath (file) {
   return filePath
 }
 
+// Posts
+
 /*
 * Add single post to db
 * @param {string} userID
@@ -74,4 +76,34 @@ const posts = {
   updateCount: getNumberOfUpdates
 }
 
-export { posts }
+// Collections
+
+/*
+* Add a collection
+* @param {string} userId
+* @param {string} name
+* @param {bool} pvtPolicy - indicates whether collection is private
+*/
+function addCollection (userId, name, pvtPolicy) {
+  const query = fs.readFileSync(sqlFilePath('add_collection.sql')).toString()
+  return db.query(query, [userId, name, pvtPolicy])
+}
+
+/*
+* Get a user's collections
+* @param {string} userId
+*/
+function getCollections (userId) {
+  const query = fs.readFileSync(sqlFilePath('get_user_collections.sql')).toString()
+  return db.query(query, [userId])
+}
+
+const collections = {
+  add: addCollection,
+  get: getCollections
+}
+
+export {
+  posts,
+  collections
+}

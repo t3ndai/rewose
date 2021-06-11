@@ -1,0 +1,12 @@
+<article>
+    {% for collection in collectionsArray %}
+    <article>
+        <label>{{ collection.name }}</label>
+        <input type="checkbox">
+        {% if collection.pvtpolicy %}
+            <div>private</div>
+        {% endif %}
+    </article>
+    {% endfor %}
+    <button hx-trigger="click" hx-get="/collections/create" hx-target="#collections">New Collection</button>
+</article>
