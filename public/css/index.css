@@ -1,0 +1,12 @@
+:root {
+    --black: #000000ff;
+    --onyx: #363946ff;
+    --dim-gray: #696773ff;
+    --morning-blue: #819595ff;
+    --ash-gray: #b1b6a6ff;
+}
+
+.navBar {
+    background-color: var(--ash-gray);
+    display: flex;
+}

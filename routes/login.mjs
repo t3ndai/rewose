@@ -17,6 +17,8 @@ ToDo
 
 // Register
 
+const cookieExpiryDuration = 24 * 1000 * 60
+
 function getRegister (req, reply) {
   const page = 'Register'
   reply.render('login/login.html', { page: page })
@@ -34,7 +36,7 @@ function postRegister (req, reply) {
             return reply
               .status(201)
               .cookie('user_id', authResult.data, {
-                expireply: new Date(Date.now() * 24 * 3_600_000),
+                expireply: new Date(Date.now() + cookieExpiryDuration),
                 httpOnly: true,
                 sameSite: true,
                 signed: true
@@ -74,7 +76,7 @@ function postLogin (req, reply, next) {
             return reply
               .status(200)
               .cookie('user_id', authResult.data, {
-                expireply: new Date(Date.now() + 24 * 3600000),
+                expireply: new Date(Date.now() + cookieExpiryDuration),
                 httpOnly: true,
                 sameSite: true,
                 signed: true

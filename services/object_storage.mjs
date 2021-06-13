@@ -26,11 +26,14 @@ export async function saveFile (filename, file) {
   return clientS3.send(command)
     .then(_ => {
       const url = `${OBJECT_STORE}/${BUCKET}/${filename}`
-      console.log('url', url)
       return url
     })
     .catch(err => {
       console.log(err)
       return Error('error saving file')
     })
+}
+
+export async function getFile (fileUrl) {
+
 }

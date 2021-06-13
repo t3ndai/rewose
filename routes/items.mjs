@@ -2,10 +2,12 @@
 import express from 'express'
 import multer from 'multer'
 import sanitizeHtml from 'sanitize-html'
+import { Worker, isMainThread } from 'worker_threads'
 
 import auth from '../middleware/auth.mjs'
 import { posts } from '../services/sql.mjs'
 import { saveFile } from '../services/object_storage.mjs'
+// import resizeImage from '../workers/image_resize.mjs'
 
 /*
  TODO
@@ -54,23 +56,40 @@ async function createItem (req, reply) {
 /*
 * Handles Attachment upload
  */
-function uploadAttachment (req, reply) {
+async function uploadAttachment (req, reply) {
   const filename = req.body.filename
   const file = req.file.buffer
+  const fileType = req.file.mimetype
+  console.log(fileType)
 
   if (filename && file) {
-    saveFile(filename, file)
-      .then(url => {
+    try {
+      const url = await saveFile(filename, file)
+
+      if (url) {
+        // for images run worker to resize images
+        if (fileType === 'image/jpeg' || fileType === 'image/png') {
+          if (isMainThread) {
+            const workerUrl = new URL('../workers/image_resize.mjs', import.meta.url)
+            const worker = new Worker(workerUrl, { workerData: { filename: filename, fileUrl: url } })
+            worker.on('error', (err) => {
+              console.log(err)
+              throw new Error('error encountered')
+            })
+          }
+        }
         reply
           .status(201)
           .send({ filename: filename, url: url })
-      })
-      .catch(err => {
-        console.log(err)
-        reply
-          .status(500)
-          .send({ error: 'error saving file' })
-      })
+      } else {
+        throw Error('error saving file')
+      }
+    } catch (err) {
+      console.log(err)
+      reply
+        .status(500)
+        .send({ error: 'error saving file' })
+    }
   } else {
     // TODO: Error if no attached file
     reply

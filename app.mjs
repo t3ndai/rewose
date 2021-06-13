@@ -17,6 +17,8 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser('super_secret'))
 
+app.use(express.static('public'))
+
 app.use(morgan('dev'))
 
 // Views
