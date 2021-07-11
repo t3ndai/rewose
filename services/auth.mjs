@@ -1,65 +1,42 @@
-import axios from 'axios'
+import { pbkdf2Sync } from 'crypto'
+import { users } from '../services/sql.mjs'
+import generateUsername from '../services/usernames.mjs'
 
-const authApiKey = 'TCtv7UHNCk-Si1GR-TnCES16Cng7CuZDmis5n9uSC_c_-OCAYqwtAESF'
-const applicationId = 'a1f573fc-5523-49f5-a25b-a852e274e70d'
-const faUrl = 'http://localhost:9011/api/'
-const headers = { Authorization: authApiKey, 'Content-type': 'application/json' }
+const SALT = '000rewose01k'
+
+/*
+* TODO
+* - deal with duplicate email
+* - deal with user not found
+* - deal with duplicate username 
+*/
 
 async function register (email, password) {
-  return axios({
-    method: 'POST',
-    url: faUrl + 'user',
-    headers: headers,
-    data: {
-      user: {
-        email: email,
-        password: password
-      }
-    }
-  })
-    .then(r => {
-      if (r.status >= 200 && r.status < 300) {
-        const userId = r.data.user.id
-        return { msg: 'ok', data: userId }
-      } else if (r.status >= 500) {
-        console.log(r.data)
-        throw Error('Auth Service Error')
-      } else if (r.status >= 400 && r.status < 500) {
-        return { msg: 'error', data: 'Authentication credentials wrong' }
-      }
-    })
-    .catch(err => {
-      console.log(err)
-      return Promise.reject(err)
-    })
+  const hashedPasswordBuffer = pbkdf2Sync(password, SALT, 100000, 64, 'sha512')
+  const hashedPassword = hashedPasswordBuffer.toString('hex')
+  const username  = generateUsername()
+  try {
+    const results = await users.add(email, hashedPassword, username)
+    const { rows: [{ id: userId, user_name: userName }] } = results
+    return { msg: 'ok', data: { id: userId, userName } }
+  } catch (err) {
+    console.log(err)
+    return { msg: 'error', data: 'Authentication credentials wrong' }
+  }
 }
 
 async function login (email, password) {
-  return axios({
-    method: 'POST',
-    url: faUrl + 'login',
-    headers: headers,
-    data: { loginId: email, password: password, applicationId: applicationId }
-  })
-    .then(r => {
-      if (r.status >= 200 && r.status < 300) {
-        const userId = r.data.user.id
-        return { msg: 'ok', data: userId }
-      } else if (r.status >= 500) {
-        console.log(r.data)
-        throw Error('Auth Service Error')
-      } else if (r.status >= 400 && r.status < 500) {
-        return { msg: 'error', data: 'Authentication credentials wrong' }
-      }
-    })
-    .catch(err => {
-      console.log(err)
-      return Promise.reject(err)
-    })
-}
-
-function authResponseUtil () {
-
+  const hashedPasswordBuffer = pbkdf2Sync(password, SALT, 100000, 64, 'sha512')
+  const hashedPassword = hashedPasswordBuffer.toString('hex')
+  try {
+    const results = await users.get(email, hashedPassword)
+    console.log(results)
+    const { rows: [{ id: userId, user_name: userName }] } = results
+    return { msg: 'ok', data: { id: userId, userName } }
+  } catch (err) {
+    console.log(err)
+    return { msg: 'error', data: 'Authentication credentials wrong' }
+  }
 }
 
 const auth = {

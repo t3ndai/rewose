@@ -1,13 +1,16 @@
+{% set userName %}
 {% extends 'base.html' %}
+
 {% block content %}
         <h1> RemoteWorkingSetups </h1> 
         <p> Welcome Bozo </p> 
 
         <article> 
+            {{ userName }}
             <button> 
                 <a type='button', href="/items/newItem" data-turbo-action="replace"> 
                     Create+
                 </a>
             </button>
         </article>
-{% endblock %}
+{% endblock %}+

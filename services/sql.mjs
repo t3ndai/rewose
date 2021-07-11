@@ -103,7 +103,38 @@ const collections = {
   get: getCollections
 }
 
+// Users
+
+/*
+* Save User
+* @param {string} email 
+* @param {string} hashedpassword 
+* @param {string} initial generated username 
+*/
+function addUser (email, password, username) {
+  const query = fs.readFileSync(sqlFilePath('add_user.sql')).toString()
+  return db.query(query, [email, password, username])
+}
+
+/*
+* Get User
+* @param {string} email 
+* @param {string} password 
+*/
+function getUser (email, password) {
+  const query = fs.readFileSync(sqlFilePath('get_user.sql')).toString()
+  return db.query(query, [email, password])
+}
+
+
+
+const users = {
+  add: addUser,
+  get: getUser
+}
+
 export {
   posts,
-  collections
+  collections,
+  users
 }

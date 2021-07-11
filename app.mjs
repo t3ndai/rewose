@@ -28,6 +28,9 @@ app.set('views', 'views')
 
 // Routing
 
+app.get('/', (req, res) => {
+  res.render('index')
+})
 app.use('/home', home)
 app.use('/items', items)
 app.use(login)

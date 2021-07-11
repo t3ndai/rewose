@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+<head>
+    <script src="https://unpkg.com/htmx.org@1.4.1" defer></script>
+    <script src="https://unpkg.com/@popperjs/core@2" defer></script>
+    <script src="https://unpkg.com/tippy.js@6" defer></script>
+    <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
+    <script src="https://unpkg.com/mithril/mithril.min.js"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light.css">
+    <link rel="stylesheet" href="/css/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tachyons/4.11.1/tachyons.min.css" integrity="sha512-d0v474klOFSF7qD9WDvyRxAvXaWSxCHDZdnBSZQjo8BpVr6vpjwAgqetpqkKP38DzlOzdVPaLVnzzW1Ba8wB9w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <title>RemoteSetups.work</title>
+    <nav class="navBar">
+        <h1>RemoteSetups.work - discover your next remote work setup</h1>
+        <div id="userState"></div>
+    </nav>
+    <div id="app"></div>
+</body>
+
+
+<script type="module">
+ import LoginState from '/js/components/loginState.mjs'
+ import LoginPage from '/js/pages/login.mjs'
+ import IndexPage from '/js/pages/index.mjs'
+ import user from '/js/models/user.mjs'
+
+ const userStateNode = document.getElementById('userState')
+ const mainApp = document.getElementById('app')
+
+ m.mount(userStateNode, {
+    view: function() {
+       return m(LoginState, {user: user})
+    }
+ })
+ m.route(mainApp, "/", {
+    '/': IndexPage, 
+    '/login': { 
+        render: function(vnode) {
+            return m(LoginPage, {page: "Login"})
+        } 
+    },
+    '/register': {
+        render: function(vnode) {
+            return m(LoginPage, {page: "Register"})
+        }
+    }
+ })
+</script>

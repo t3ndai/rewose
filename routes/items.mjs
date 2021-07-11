@@ -7,11 +7,9 @@ import { Worker, isMainThread } from 'worker_threads'
 import auth from '../middleware/auth.mjs'
 import { posts } from '../services/sql.mjs'
 import { saveFile } from '../services/object_storage.mjs'
-// import resizeImage from '../workers/image_resize.mjs'
 
 /*
  TODO
-
 */
 
 const items = express.Router()
@@ -60,7 +58,6 @@ async function uploadAttachment (req, reply) {
   const filename = req.body.filename
   const file = req.file.buffer
   const fileType = req.file.mimetype
-  console.log(fileType)
 
   if (filename && file) {
     try {

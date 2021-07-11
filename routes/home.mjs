@@ -10,7 +10,7 @@ import auth from '../middleware/auth.mjs'
 */
 
 const home = express.Router()
-home.use(auth.sessionValid)
+//home.use(auth.sessionValid)
 
 function getHome (req, res) {
   res.render('home/home')
