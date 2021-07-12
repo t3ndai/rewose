@@ -10,3 +10,7 @@
     background-color: var(--ash-gray);
     display: flex;
 }
+
+#editor-container {
+    height: 200px
+}

@@ -1,15 +1,19 @@
 <!DOCTYPE html>
 
 <head>
-    <script src="https://unpkg.com/htmx.org@1.4.1" defer></script>
-    <script src="https://unpkg.com/@popperjs/core@2" defer></script>
-    <script src="https://unpkg.com/tippy.js@6" defer></script>
-    <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js"></script>
+    <script src="https://unpkg.com/@popperjs/core@2" async></script>
+    <script src="https://unpkg.com/tippy.js@6" async></script>
+    <script src="https://unpkg.com/dayjs@1.8.21/dayjs.min.js" async></script>
     <script src="https://unpkg.com/mithril/mithril.min.js"></script>
 
     <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light.css">
     <link rel="stylesheet" href="/css/index.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tachyons/4.11.1/tachyons.min.css" integrity="sha512-d0v474klOFSF7qD9WDvyRxAvXaWSxCHDZdnBSZQjo8BpVr6vpjwAgqetpqkKP38DzlOzdVPaLVnzzW1Ba8wB9w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tachyons/4.11.1/tachyons.min.css" integrity="sha512-d0v474klOFSF7qD9WDvyRxAvXaWSxCHDZdnBSZQjo8BpVr6vpjwAgqetpqkKP38DzlOzdVPaLVnzzW1Ba8wB9w==" crossorigin="anonymous" referrerpolicy="no-referrer"  async />
+    <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" async>
+    <link
+    href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css"
+    rel="stylesheet" async>
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet" async>
 </head>
 
 <body>
@@ -26,6 +30,8 @@
  import LoginState from '/js/components/loginState.mjs'
  import LoginPage from '/js/pages/login.mjs'
  import IndexPage from '/js/pages/index.mjs'
+ import  CreateItemPage from '/js/pages/createItemPage.mjs'
+
  import user from '/js/models/user.mjs'
 
  const userStateNode = document.getElementById('userState')
@@ -46,6 +52,11 @@
     '/register': {
         render: function(vnode) {
             return m(LoginPage, {page: "Register"})
+        }
+    },
+    '/createItem': {
+        render: function(vnode) {
+            return m(CreateItemPage)
         }
     }
  })
