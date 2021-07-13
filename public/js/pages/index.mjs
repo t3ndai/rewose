@@ -1,4 +1,4 @@
-import createItemBtn from '/js/components/createItemBtn.mjs'
+import createItemBtn from '../components/createItemBtn.mjs'
 
 const IndexPage = {
     view() {

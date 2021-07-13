@@ -18,7 +18,7 @@ const AddImagesComponent = {
                     accept: 'image/*',
                     onchange: addFile,
                 }),
-                m('button', {}, 'Upload Images')
+                m('button', {onclick: uploadImages}, 'Upload Images')
             )
         )
     }
@@ -28,10 +28,12 @@ const addFile = (e) => {
     const files = fileInput.files
 
     for (const file of files) {
-        const url = URL.createObjectURL(file)
-        Item.attachments.push(url)
-        console.log(Item.attachments)
+        Item.attachments.push(file)
     }
+}
+
+const uploadImages = (e) => {
+    
 }
 
 export default AddImagesComponent

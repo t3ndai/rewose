@@ -19,42 +19,50 @@ const memoryStorage = multer.memoryStorage()
 const upload = multer({ storage: memoryStorage })
 
 /*
-* Item creation page
-*/
-function newItem (req, reply) {
-  const formAction = 'items/createItem'
-  reply.render('items/create_item', { formAction })
-}
-
-/*
 * Saves User created post to db
 */
-async function createItem (req, reply) {
-  const postBody = req.body.content
+async function createItem(req, res) {
+  const notes = sanitizeHtml(req.body.notes)
   const tags = req.body.tags.split(',')
-  const userId = req.signedCookies.user_id
-
-  const cleanedData = sanitizeHtml(postBody, {
-    allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img'])
-  })
-  const content = JSON.stringify(cleanedData)
+  const photos = req.files
+  const gear = sanitizeHtml(req.body.gear)
+  const { id: userId } = req.signedCookies.user_id
 
   try {
+    const imageResults = photos.map(async (file) => {
+      const filename = file.originalname + '-' + Date.now()
+      try {
+        const url = await saveFile(filename, file.buffer)
+        return url
+      } catch (err) {
+        console.log(err)
+        return err
+      }
+    })
+    const imageUrls = await Promise.all(imageResults)
+    console.log(imageUrls)
+    const content = JSON.stringify({
+      'notes': notes,
+      'photos': imageUrls,
+      'gear': gear
+    })
     await posts.add(userId, content, tags)
 
-    reply.redirect('/home')
+    res
+      .status(200)
+      .json({ msg: 'created post' })
   } catch (err) {
     console.log(err)
-    reply
+    res
       .status(500)
-      .send('Could not save post')
+      .json({ msg: 'Could not save post' })
   }
 }
 
 /*
 * Handles Attachment upload
  */
-async function uploadAttachment (req, reply) {
+async function uploadAttachment(req, reply) {
   const filename = req.body.filename
   const file = req.file.buffer
   const fileType = req.file.mimetype
@@ -98,7 +106,7 @@ async function uploadAttachment (req, reply) {
 /*
 * Get item by id
 */
-async function getItem (req, res) {
+async function getItem(req, res) {
   const itemId = req.params.itemId
   const userId = req.signedCookies.user_id
 
@@ -126,7 +134,7 @@ async function getItem (req, res) {
 /*
 * Update item
 */
-async function updateItem (req, res) {
+async function updateItem(req, res) {
   const itemId = req.params.itemId
   const userId = req.signedCookies.user_id
   const dirtyContent = req.body.content
@@ -154,7 +162,7 @@ async function updateItem (req, res) {
 /*
 * Item update Edit
 */
-async function getItemUpdateEdit (req, res) {
+async function getItemUpdateEdit(req, res) {
   const itemId = req.params.itemId
   const formAction = `items/${itemId}/update`
 
@@ -175,7 +183,7 @@ async function getItemUpdateEdit (req, res) {
 /*
 * Get children of posts i.e updates
 */
-async function getPostUpdates (req, res) {
+async function getPostUpdates(req, res) {
   const itemId = req.params.itemId
 
   try {
@@ -193,12 +201,11 @@ async function getPostUpdates (req, res) {
 }
 
 // Items
-items.get('/newItem', newItem)
 items.get('/:itemId', getItem)
 items.get('/:itemId/update', getItemUpdateEdit)
 items.get('/:itemId/updates', getPostUpdates)
 
-items.post('/createItem', createItem)
+items.post('/createItem', upload.array('photos', 3), createItem)
 items.post('/attachment', upload.array('photos', 3), uploadAttachment)
 items.post('/:itemId/update', updateItem)
 
