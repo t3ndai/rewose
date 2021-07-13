@@ -16,6 +16,13 @@ export const GearDetail = {
     name: '',
     price: '',
     url: '',
+    error: false,
+    reset: function () {
+        this.name = ''
+        this.price = ''
+        this.url = ''
+        this.error = false
+    }
 }
 
 export default Item 

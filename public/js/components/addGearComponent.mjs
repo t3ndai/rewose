@@ -7,7 +7,8 @@ const AddGearComponent = {
                 m('legend', 'Add Gear'),
 
                 m('label', { for: 'gear-name' }, 'name'),
-                m('input', { name: 'gear-name', value: GearDetail.name }),
+                m('input', { name: 'gear-name', value: GearDetail.name, oninput: addNameOrUrl('name') }),
+                GearDetail.error && m('span.red', 'Gear Item requires a name'),
 
                 m('label', 'gear price'),
                 Object.keys(GearPrices).map(key => {
@@ -20,16 +21,34 @@ const AddGearComponent = {
                 }),
 
                 m('label', { for: 'gear-url' }, 'url'),
-                m('input', { name: 'gear-url' }),
+                m('input', { name: 'gear-url', value: GearDetail.url, oninput: addNameOrUrl('url') }),
 
-                m('button', {}, 'add')
+                m('button', { onclick: add }, 'add')
             )
         )
     }
 }
 
-const addName = (e) => {
-    GearDetail.name = e.target.value 
+
+/* 
+* Add the GearDetail to Item 
+* GearDetail price, url optional 
+*/
+const add = e => {
+    if (GearDetail.name) {
+        // Push a copy of GearDetail into Item
+        Item.gear.push({ ...GearDetail })
+        GearDetail.reset()
+    } else {
+        GearDetail.error = true 
+    }
+}
+
+const addNameOrUrl = attr => (e) => {
+    if (attr === 'name') {
+        GearDetail.error = false
+    }
+    GearDetail[`${attr}`] = e.target.value
 }
 
 const isSelected = (key) => {

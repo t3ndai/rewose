@@ -199,7 +199,7 @@ items.get('/:itemId/update', getItemUpdateEdit)
 items.get('/:itemId/updates', getPostUpdates)
 
 items.post('/createItem', createItem)
-items.post('/attachment', upload.single('file'), uploadAttachment)
+items.post('/attachment', upload.array('photos', 3), uploadAttachment)
 items.post('/:itemId/update', updateItem)
 
 export default items

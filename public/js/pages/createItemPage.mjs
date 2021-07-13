@@ -1,8 +1,10 @@
 import AddTagCompoent from '../components/addTagComponent.mjs'
 import AddGearComponent from '../components/addGearComponent.mjs';
-import * as FilePond from 'https://cdn.skypack.dev/filepond';
+//import * as FilePond from 'https://cdn.skypack.dev/filepond';
 import DisplayGearComponent from '../components/displayGearComponent.mjs';
 import DisplayTagComponent from '../components/displayTagComponent.mjs';
+import AddImagesComponent from '../components/addImagesComponent.mjs';
+import DisplayImagePreviewComponent from '../components/displayImagePreviewComponent.mjs';
 
 let pond 
 let quillEditor
@@ -27,23 +29,27 @@ const CreateItemPage = {
             theme: 'snow'
         })
         const pondInput = document.getElementById('filepond')
-        FilePond.registerPlugin(
+        /* FilePond.registerPlugin(
             FilePondPluginImagePreview,
             FilePondPluginFileValidateSize,
             FilePondPluginImageExifOrientation,
         )
-        pond = FilePond.create(pondInput)
+        pond = FilePond.create(pondInput) */
     },
     view: function (vnode) {
         return m("article.grid",
-            m("input", {
+            /* m("input", {
                 "id": "filepond",
                 "name": "filepond",
                 "multiple": true,
                 'data-allow-reorder': true,
                 'data-max-files': 3,
                 'data-max-file-size': '5MB'
-            }),
+            }), */
+
+            m(DisplayImagePreviewComponent),
+
+            m(AddImagesComponent),
 
             m(DisplayGearComponent),
 

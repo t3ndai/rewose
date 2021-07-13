@@ -7,7 +7,7 @@ const DisplayGearComponent = {
             Item.gear.map(gear => {
                 return m('div', 
                     m('div', gear.name),
-                    m('div', price),
+                    m('div', gear.price),
                     m('a', {href: gear.url}, 'where to buy')
                 )
             })
