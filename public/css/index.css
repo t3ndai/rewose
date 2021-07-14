@@ -14,3 +14,21 @@
 #editor-container {
     height: 200px
 }
+
+.index {
+    display: grid;
+    grid-template-rows: 3fr;
+    grid-template-columns: 1fr;
+}
+
+.postsSnippet {
+    display: flex;
+    flex-direction: column;
+}
+
+.postSnippetSingle {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 50px;
+
+}

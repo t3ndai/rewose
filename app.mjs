@@ -9,6 +9,7 @@ import login from './routes/login.mjs'
 import home from './routes/home.mjs'
 import items from './routes/items.mjs'
 import collections from './routes/collections.mjs'
+import postsRoute from './routes/postsRoute.mjs'
 
 // Set up Express
 const app = express()
@@ -35,6 +36,7 @@ app.use('/home', home)
 app.use('/items', items)
 app.use(login)
 app.use('/collections', collections)
+app.use('/posts', postsRoute)
 
 app.listen(8000, '0.0.0.0', () => {
   console.log('listening on port 8000')

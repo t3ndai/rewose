@@ -68,12 +68,22 @@ function getNumberOfUpdates (postId) {
   return db.query(query, [postId])
 }
 
+/* 
+* Get latest posts
+* @returns {Promise} result
+*/
+function getLatestPosts() {
+  const query = fs.readFileSync(sqlFilePath('get_latest_posts.sql')).toString()
+  return db.query(query)
+}
+
 const posts = {
   add: addPost,
   get: getPost,
   update: updatePost,
   children: getPostChildren,
-  updateCount: getNumberOfUpdates
+  updateCount: getNumberOfUpdates,
+  latest: getLatestPosts
 }
 
 // Collections
