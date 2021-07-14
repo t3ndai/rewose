@@ -18,7 +18,7 @@ async function register (email, password) {
   try {
     const results = await users.add(email, hashedPassword, username)
     const { rows: [{ id: userId, user_name: userName }] } = results
-    return { msg: 'ok', data: { id: userId, userName } }
+    return { msg: 'ok', data: { userId, userName } }
   } catch (err) {
     console.log(err)
     return { msg: 'error', data: 'Authentication credentials wrong' }
@@ -30,9 +30,9 @@ async function login (email, password) {
   const hashedPassword = hashedPasswordBuffer.toString('hex')
   try {
     const results = await users.get(email, hashedPassword)
-    console.log(results)
+
     const { rows: [{ id: userId, user_name: userName }] } = results
-    return { msg: 'ok', data: { id: userId, userName } }
+    return { msg: 'ok', data: { userId, userName } }
   } catch (err) {
     console.log(err)
     return { msg: 'error', data: 'Authentication credentials wrong' }

@@ -22,12 +22,7 @@ ToDo
 
 const cookieExpiryDuration = 24 * 1000 * 60 * 60 * 60 // expire cookie in 60 days
 
-function getRegister (req, reply) {
-  const page = 'Register'
-  reply.render('login/login.html', { page: page })
-}
-
-function postRegister (req, reply, next) {
+function postRegister(req, reply, next) {
   console.log(req.body)
   const email = sanitizeHtml(req.body.email)
   const password = sanitizeHtml(req.body.password)
@@ -45,30 +40,29 @@ function postRegister (req, reply, next) {
                 sameSite: true,
                 signed: true
               })
-              .json({user: { name: authResult.data.userName }})
+              .json(authResult.data)
           case 'error':
             return reply
               .status(404)
-              .redirect('/register')
+              .json({ 'msg': 'wrong credentials' })
         }
       })
       .catch(err => {
         console.log(err)
-        reply.send('Please try again, we had error!')
+        return reply
+          .status(500)
+          .json({ msg: 'Please try again, we had error!'})
       })
   } else {
-    reply.send('Pass in valid data')
+    return reply
+      .status(400)
+      .json({ msg: 'Pass in valid data' })
   }
 }
 
 // Login
 
-function getLogin (req, reply) {
-  const page = 'Login'
-  reply.render('login/login.html', { page: page })
-}
-
-function postLogin (req, reply) {
+function postLogin(req, reply) {
   const email = sanitizeHtml(req.body.email)
   const password = sanitizeHtml(req.body.password)
 
@@ -80,13 +74,13 @@ function postLogin (req, reply) {
             console.log(authResult.data)
             return reply
               .status(200)
-              .cookie('user_id', authResult.data, {
+              .cookie('user_id', authResult.data.userId, {
                 expires: new Date(Date.now() + cookieExpiryDuration),
                 httpOnly: true,
                 sameSite: true,
                 signed: true
               })
-              .json({user: { name: authResult.data.userName }})
+              .json(authResult.data)
           case 'error':
             return reply
               .status(404)
@@ -94,10 +88,14 @@ function postLogin (req, reply) {
         }
       }).catch(err => {
         console.log(err)
-        reply.send('Please try again, we had an error!')
+        return reply
+          .status(500)
+          .json({ msg: 'Please try again, we had error!'})
       })
   } else {
-    reply.send('pass in valid data')
+    return reply
+      .status(400)
+      .json({ msg: 'Pass in valid data' })
   }
 }
 
@@ -105,15 +103,13 @@ function postLogin (req, reply) {
 * Logout 
 */
 function getLogout(req, res) {
-  return res 
-          .status(200)
-          .clearCookie('user_id')
+  return res
+    .status(200)
+    .clearCookie('user_id')
 }
 
-//login.get('/register', getRegister)
 login.post('/register', postRegister)
 
-//login.get('/login', getLogin)
 login.post('/login', postLogin)
 
 export default login

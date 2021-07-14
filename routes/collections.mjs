@@ -13,15 +13,14 @@ async function getCollections (req, res) {
   try {
     const results = await db.get(userId)
     const { rows: collectionsArray } = results
-    console.log(collectionsArray)
     res
       .status(200)
-      .render('collections/collections', { collectionsArray })
+      .json(collectionsArray)
   } catch (err) {
     console.log(err)
     res
       .status(500)
-      .send("can't get collections")
+      .json({ msg: "can't get collections" })
   }
 }
 
@@ -38,27 +37,19 @@ async function addCollection (req, res) {
       await db.add(userId, collectionName, pvtPolicy)
       res
         .status(201)
-        .render('collections/collections')
+        .json({'msg': 'created new collection'})
     } catch (err) {
       console.log(err)
     }
   } else {
     res
       .status(400)
-      .send('please provide a name')
+      .json({ msg: 'please provide a name' })
   }
 }
 
-/*
-* Create Collection View
-*/
-function createCollection (req, res) {
-  res
-    .render('collections/create_collection')
-}
 
 collections.get('/', getCollections)
-collections.get('/create', createCollection)
 collections.post('/add', addCollection)
 
 export default collections

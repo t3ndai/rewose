@@ -31,6 +31,20 @@ const Posts = {
         .catch(err => {
             console.log(err)
         })
+    },
+    savePostToCollection: (collections) => {
+        const formBody = {
+            postId: Posts.current.postId, 
+            collections
+        }
+        m.request({
+            method: 'POST',
+            url: Posts.origin() + '/items/postCollection',
+            body: formBody
+        })
+        .catch(err => {
+            console.log(err)
+        })
     }
 }
 

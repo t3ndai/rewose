@@ -9,6 +9,7 @@
 .navBar {
     background-color: var(--ash-gray);
     display: flex;
+    color: var(--onyx);    
 }
 
 #editor-container {
@@ -31,4 +32,9 @@
     grid-template-columns: 1fr;
     grid-template-rows: 1fr 50px;
 
+}
+
+.links {
+    display: flex;
+    flex-direction: column;
 }

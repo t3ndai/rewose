@@ -200,6 +200,35 @@ async function getPostUpdates(req, res) {
   }
 }
 
+/* 
+* Save Post to Collection 
+*/
+async function savePostToCollection(req, res) {
+  const userId = req.signedCookies.user_id
+  const postId = req.body.postId
+  const collections = req.body.collections
+
+  try {
+    await collections.map(async (collection) => {
+      try { 
+        await posts.savePostToCollection(postId, collection)
+      } 
+      catch (err) {
+        throw err
+      }
+    })
+    res
+      .status(201)
+      .json({ msg: 'saved post to collection' })
+  } catch (err) {
+    console.log(err)
+    res
+      .status(500)
+      .json({ msg: 'could not save post to collection' })
+  }
+}
+
+
 // Items
 items.get('/:itemId', getItem)
 items.get('/:itemId/update', getItemUpdateEdit)
@@ -208,5 +237,6 @@ items.get('/:itemId/updates', getPostUpdates)
 items.post('/createItem', upload.array('photos', 3), createItem)
 items.post('/attachment', upload.array('photos', 3), uploadAttachment)
 items.post('/:itemId/update', updateItem)
+items.post('/postCollection', savePostToCollection)
 
 export default items

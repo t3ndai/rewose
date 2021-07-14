@@ -1,5 +1,6 @@
 import { formatRelative } from 'https://cdn.skypack.dev/date-fns'
 import Posts from '../models/posts.mjs'
+import AddPostToCollectionComponent from '../components/addPostToCollectionComponent.mjs'
 
 const DisplayPostPage = {
     oninit: function(vnode) {
@@ -12,7 +13,8 @@ const DisplayPostPage = {
             gear = JSON.parse(post.content.gear)
         }
         return !R.isEmpty(post) && m('article', 
-            //m('p', formatRelative(new Date(post.created_at), new Date())),
+            m(AddPostToCollectionComponent),
+            m('p', formatRelative(new Date(post.created_at), new Date())),
             post.tags.map(tag => {
                return m('div', tag)
             }),

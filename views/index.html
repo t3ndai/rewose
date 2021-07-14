@@ -8,68 +8,82 @@
 
     <link rel="stylesheet" href="https://unpkg.com/tippy.js@6/themes/light.css">
     <link rel="stylesheet" href="/css/index.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tachyons/4.11.1/tachyons.min.css" integrity="sha512-d0v474klOFSF7qD9WDvyRxAvXaWSxCHDZdnBSZQjo8BpVr6vpjwAgqetpqkKP38DzlOzdVPaLVnzzW1Ba8wB9w==" crossorigin="anonymous" referrerpolicy="no-referrer"  async />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tachyons/4.11.1/tachyons.min.css"
+        integrity="sha512-d0v474klOFSF7qD9WDvyRxAvXaWSxCHDZdnBSZQjo8BpVr6vpjwAgqetpqkKP38DzlOzdVPaLVnzzW1Ba8wB9w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" async />
     <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" async>
-    <link
-    href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css"
-    rel="stylesheet" async>
+    <link href="https://unpkg.com/filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css" rel="stylesheet"
+        async>
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet" async>
-    <script src="//cdn.jsdelivr.net/npm/ramda@0.25.0/dist/ramda.min.js" async></script>
+    <script src="https://cdn.jsdelivr.net/npm/ramda@0.27.1/dist/ramda.min.js"></script>
 </head>
 
 <body>
     <title>RemoteSetups.work</title>
     <nav class="navBar">
         <h1>RemoteSetups.work - discover your next remote work setup</h1>
-        <div id="userState"></div>
+        <div id="navBar"></div>
     </nav>
     <div id="app"></div>
 </body>
 
 
 <script type="module">
- import LoginState from '/js/components/loginState.mjs'
- import LoginPage from '/js/pages/login.mjs'
- import IndexPage from '/js/pages/index.mjs'
- import  CreateItemPage from '/js/pages/createItemPage.mjs'
- import DisplayPostPage from '/js/pages/displayPostPage.mjs'
- import user from '/js/models/user.mjs'
- import posts from '/js/models/posts.mjs'
+    var originUrl = window.location.origin
 
- const userStateNode = document.getElementById('userState')
- const mainApp = document.getElementById('app')
+    import LoginState from '/js/components/loginState.mjs'
+    import LoginPage from '/js/pages/login.mjs'
+    import IndexPage from '/js/pages/index.mjs'
+    import CreateItemPage from '/js/pages/createItemPage.mjs'
+    import DisplayPostPage from '/js/pages/displayPostPage.mjs'
+    import DisplayCollectionsPage from '/js/pages/displayCollectionsPage.mjs'
+    import NavBarComponent from '/js/components/navBarComponent.mjs'
 
- m.mount(userStateNode, {
-    view: function() {
-       return m(LoginState, {user: user})
-    }
- })
- m.route(mainApp, "/", {
-    '/': {
-        onmatch: posts.loadList,
-        render: () => {
-            return m(IndexPage)
+    import user from '/js/models/user.mjs'
+    import posts from '/js/models/posts.mjs'
+    import collections from '/js/models/collections.mjs'
+
+    const navBarNode = document.getElementById('navBar')
+    const mainApp = document.getElementById('app')
+
+    m.mount(navBarNode, {
+        view: function () {
+            return m(NavBarComponent)
         }
-    }, 
-    '/login': { 
-        render: function(vnode) {
-            return m(LoginPage, {page: "Login"})
-        } 
-    },
-    '/register': {
-        render: function(vnode) {
-            return m(LoginPage, {page: "Register"})
-        }
-    },
-    '/createItem': {
-        render: function(vnode) {
-            return m(CreateItemPage)
-        }
-    },
-    '/posts/:id': {
-        render: function(vnode) {
-            return m(DisplayPostPage, {id: vnode.attrs.id})
-        }
-    }
- })
+    })
+    m.route(mainApp, "/", {
+        '/': {
+            onmatch: posts.loadList,
+            render: () => {
+                return m(IndexPage)
+            }
+        },
+        '/login': {
+            render: function (vnode) {
+                return m(LoginPage, { page: "Login" })
+            }
+        },
+        '/register': {
+            render: function (vnode) {
+                return m(LoginPage, { page: "Register" })
+            }
+        },
+        '/createItem': {
+            render: function (vnode) {
+                return m(CreateItemPage)
+            }
+        },
+        '/posts/:id': {
+            onmatch: collections.getUserCollections,
+            render: function (vnode) {
+                return m(DisplayPostPage, { id: vnode.attrs.id })
+            }
+        },
+        '/collections': {
+            onmatch: collections.getUserCollections,
+            render: () => {
+                return m(DisplayCollectionsPage)
+            }
+        },
+    })
 </script>

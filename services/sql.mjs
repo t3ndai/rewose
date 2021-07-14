@@ -7,7 +7,7 @@ import db from './db.mjs'
 * @param {string} file name
 * @returns {string} file path
 */
-function sqlFilePath (file) {
+function sqlFilePath(file) {
   const filePath = resolve('..', 'sql', file)
   return filePath
 }
@@ -21,7 +21,7 @@ function sqlFilePath (file) {
 * @param {Array}{string} tags
 * @returns {Promise} result
 */
-function addPost (userId, content, tags) {
+function addPost(userId, content, tags) {
   const query = fs.readFileSync(sqlFilePath('add_post.sql')).toString()
   return db.query(query, [content, userId, tags])
 }
@@ -31,7 +31,7 @@ function addPost (userId, content, tags) {
 * @param {string} postId
 * @returns {Promise} content result
 */
-function getPost (postId) {
+function getPost(postId) {
   const query = fs.readFileSync(sqlFilePath('get_post.sql')).toString()
   return db.query(query, [postId])
 }
@@ -43,7 +43,7 @@ function getPost (postId) {
 * @param {string} userId
 * @returns {Promise} result
 */
-function updatePost (content, path, userId) {
+function updatePost(content, path, userId) {
   const query = fs.readFileSync(sqlFilePath('update_post.sql')).toString()
   return db.query(query, [content, path, userId])
 }
@@ -53,7 +53,7 @@ function updatePost (content, path, userId) {
 * @param {string} postId
 * @returns {Promise} result
 */
-function getPostChildren (postId) {
+function getPostChildren(postId) {
   const query = fs.readFileSync(sqlFilePath('get_child_posts.sql')).toString()
   return db.query(query, [postId])
 }
@@ -63,7 +63,7 @@ function getPostChildren (postId) {
 * @param {string} postId
 * @returns {Promise} result
 */
-function getNumberOfUpdates (postId) {
+function getNumberOfUpdates(postId) {
   const query = fs.readFileSync(sqlFilePath('count_updates.sql')).toString()
   return db.query(query, [postId])
 }
@@ -77,13 +77,24 @@ function getLatestPosts() {
   return db.query(query)
 }
 
+/* 
+* Save Post to Collection 
+* @param {string} postId 
+* @param {string} collectionId 
+*/
+function savePostToCollection(postId, collectionId) {
+  const query = fs.readFileSync(sqlFilePath('add_post_collection.sql')).toString()
+  return db.query(query, [postId, collectionId])
+}
+
 const posts = {
   add: addPost,
   get: getPost,
   update: updatePost,
   children: getPostChildren,
   updateCount: getNumberOfUpdates,
-  latest: getLatestPosts
+  latest: getLatestPosts,
+  savePostToCollection: savePostToCollection
 }
 
 // Collections
@@ -94,7 +105,7 @@ const posts = {
 * @param {string} name
 * @param {bool} pvtPolicy - indicates whether collection is private
 */
-function addCollection (userId, name, pvtPolicy) {
+function addCollection(userId, name, pvtPolicy) {
   const query = fs.readFileSync(sqlFilePath('add_collection.sql')).toString()
   return db.query(query, [userId, name, pvtPolicy])
 }
@@ -103,7 +114,7 @@ function addCollection (userId, name, pvtPolicy) {
 * Get a user's collections
 * @param {string} userId
 */
-function getCollections (userId) {
+function getCollections(userId) {
   const query = fs.readFileSync(sqlFilePath('get_user_collections.sql')).toString()
   return db.query(query, [userId])
 }
@@ -121,7 +132,7 @@ const collections = {
 * @param {string} hashedpassword 
 * @param {string} initial generated username 
 */
-function addUser (email, password, username) {
+function addUser(email, password, username) {
   const query = fs.readFileSync(sqlFilePath('add_user.sql')).toString()
   return db.query(query, [email, password, username])
 }
@@ -131,7 +142,7 @@ function addUser (email, password, username) {
 * @param {string} email 
 * @param {string} password 
 */
-function getUser (email, password) {
+function getUser(email, password) {
   const query = fs.readFileSync(sqlFilePath('get_user.sql')).toString()
   return db.query(query, [email, password])
 }

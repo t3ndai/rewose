@@ -7,10 +7,10 @@ const LoginState = {
             vnode.attrs.user.name === "guest" ? 
             m("div",
                 m("button", 
-                    m("a", {href: "#!/login"}, "Login")
+                    m(m.route.Link, {href: "/login"}, "Login")
                 ), 
                 m("button", 
-                    m("a", {href: "#!/register"}, "Register")
+                    m(m.route.Link, {href: "/register"}, "Register")
                 )
             ) 
             : 
