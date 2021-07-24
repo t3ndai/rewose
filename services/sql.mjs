@@ -154,8 +154,26 @@ const users = {
   get: getUser
 }
 
+
+// Collections with or Without Posts
+
+/* 
+* Get User's collections with or without posts 
+* @param {string} userId
+* @param {string} postId 
+*/
+function getCollectionWAPosts(userId, postId) {
+  const query = fs.readFileSync(sqlFilePath('get_collections_WA_post.sql')).toString()
+  return db.query(query, [userId, postId])
+}
+
+const postCollections = {
+  get: getCollectionWAPosts
+}
+
 export {
   posts,
   collections,
-  users
+  users,
+  postCollections
 }

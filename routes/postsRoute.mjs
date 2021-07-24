@@ -38,8 +38,6 @@ async function getItem(req, res) {
     const { rows: [{ content, user_id: authorId, tags, created_at }] } = result
     const { rows: [{ count: numUpdates }] } = updatesResults
 
-    console.log(content)
-
     res
       .status(200)
       .json({'data': { content, tags, authorId, postId, numUpdates, created_at } })

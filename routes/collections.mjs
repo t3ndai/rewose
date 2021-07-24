@@ -17,7 +17,6 @@ async function getCollections (req, res) {
       .status(200)
       .json(collectionsArray)
   } catch (err) {
-    console.log(err)
     res
       .status(500)
       .json({ msg: "can't get collections" })
@@ -40,6 +39,9 @@ async function addCollection (req, res) {
         .json({'msg': 'created new collection'})
     } catch (err) {
       console.log(err)
+      res
+        .status(400)
+        .json({'msg': 'duplicate name'})
     }
   } else {
     res

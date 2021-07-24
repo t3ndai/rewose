@@ -23,7 +23,6 @@ ToDo
 const cookieExpiryDuration = 24 * 1000 * 60 * 60 * 60 // expire cookie in 60 days
 
 function postRegister(req, reply, next) {
-  console.log(req.body)
   const email = sanitizeHtml(req.body.email)
   const password = sanitizeHtml(req.body.password)
 
@@ -71,7 +70,6 @@ function postLogin(req, reply) {
       .then(authResult => {
         switch (authResult.msg) {
           case 'ok':
-            console.log(authResult.data)
             return reply
               .status(200)
               .cookie('user_id', authResult.data.userId, {

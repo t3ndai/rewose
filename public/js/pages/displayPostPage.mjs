@@ -13,7 +13,7 @@ const DisplayPostPage = {
             gear = JSON.parse(post.content.gear)
         }
         return !R.isEmpty(post) && m('article', 
-            m(AddPostToCollectionComponent),
+            m(AddPostToCollectionComponent, {postId: vnode.attrs.id}),
             m('p', formatRelative(new Date(post.created_at), new Date())),
             post.tags.map(tag => {
                return m('div', tag)
