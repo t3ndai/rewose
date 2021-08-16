@@ -43,7 +43,7 @@ function postRegister(req, reply, next) {
           case 'error':
             return reply
               .status(404)
-              .json({ 'msg': 'wrong credentials' })
+              .json({ err: 'wrong credentials' })
         }
       })
       .catch(err => {
@@ -82,7 +82,7 @@ function postLogin(req, reply) {
           case 'error':
             return reply
               .status(404)
-              .redirect('/login')
+              .json({err: 'incorrect details'})
         }
       }).catch(err => {
         console.log(err)

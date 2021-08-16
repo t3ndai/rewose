@@ -8,6 +8,9 @@ var user = {
     name: userName,
     id: userId, 
     sessionExpiry: '',
+    origin: function() {
+        return window.location.origin 
+    },
     login: (page, email, password) => {
         const formBody = {
             'email': email, 
@@ -16,7 +19,7 @@ var user = {
     
         m.request({
             method: "POST",
-            url: `http://localhost:8000/${page.toLowerCase()}`,
+            url: `${user.origin()}/${page.toLowerCase()}`,
             body: formBody,
             withCredentials: true,
         }).then(data => {
@@ -27,6 +30,9 @@ var user = {
            user.sessionExpiry = dayjs().add(60, 'day')
            // for now set to index page 
            m.route.set('/')   
+        })
+        .catch(err => {
+            console.log(err)
         })
     },
     logout: () => {

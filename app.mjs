@@ -4,6 +4,7 @@ import morgan from 'morgan'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import consolidate from 'consolidate'
+import cors from 'cors'
 
 import login from './routes/login.mjs'
 import home from './routes/home.mjs'
@@ -18,6 +19,7 @@ const app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(cookieParser('super_secret'))
+app.use(cors())
 
 app.use(express.static('public'))
 

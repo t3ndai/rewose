@@ -21,6 +21,10 @@ function getCollectionWAPosts(postId) {
         .catch(err => console.log(err))
 }
 
+function saveCollectionWAPosts(postId) {
+    const originUrl = window.location.origin
+}
+
 const AddPostToCollectionComponent = {
     oninit: (vnode) => {
         const { postId } = vnode.attrs
@@ -64,8 +68,7 @@ const selectCollection = collectionId => e => {
 
 
 const save = (e) => {
-    //Posts.savePostToCollection(selectedCollections)
-    console.log(collectionsMap)
+    Posts.savePostToCollection(Object.fromEntries(collectionsMap))
     showCollections = false
 }
 

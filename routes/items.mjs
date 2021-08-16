@@ -209,13 +209,14 @@ async function savePostToCollection(req, res) {
   const collections = req.body.collections
 
   try {
-    await collections.map(async (collection) => {
-      try { 
+     Object.entries(collections).map((key, collection) => {
+      console.log(key, collection)
+     /*  try { 
         await posts.savePostToCollection(postId, collection)
-      } 
+      }  
       catch (err) {
         throw err
-      }
+      } */
     })
     res
       .status(201)

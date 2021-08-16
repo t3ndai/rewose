@@ -6,8 +6,8 @@ const connectionDetail = {
   host: 'localhost',
   port: 5432,
   database: 'rewose',
-  user: 'vagrant',
-  password: 'vagrant'
+  user: 'rewose',
+  password: 'rewose'
 }
 
 const db = new Pool(connectionDetail)
